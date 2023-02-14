@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    文章
+{% endblock title %}
+
+{% block content %}
+    <div class="container">
+        <h3 class="col-12 mt-4 mb-4">{{ article.title }}</h3>
+        <div class="col-12 alert alert-success">作者：{{ article.author }}
+            . <a onclick="confirm_safe_delete()" href="#">删除文章</a>
+            <form style="display: none;"
+                  method="POST"
+                  id="safe_delete"
+                  action="{% url 'article:article_safe_delete' article.id%}">
+            {% csrf_token %}
+                <button type="submit">发送</button>
+            </form>
+            . <a href="{% url 'article:article_update' article.id %}">编辑文章</a>
+        </div>
+        <div class="col-12">
+            <p>{{ article.body|safe }}</p>
+        </div>
+    </div>
+
+    <script>
+    function confirm_safe_delete() {
+        layer.open({
+            title:'确认删除',
+            content:'确认删除这篇文章吗？',
+            yes:function (index,layero) {
+               $('form#safe_delete button').click();
+               layer.close(index);
+            },
+        })
+    }
+    </script>
+{% endblock content %}
