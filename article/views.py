@@ -4,6 +4,7 @@ from .models import ArticlePost
 import markdown
 from .forms import ArticlePostForm
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
@@ -27,12 +28,13 @@ def article_detail(request,id):
     return render(request,'article/detail.html',context)
 
 
+@login_required(login_url='/userrofile/login/')
 def article_created(request):
     if request.method == 'POST':
         article_post_form = ArticlePostForm(data=request.POST)
         if article_post_form.is_valid():
             new_article = article_post_form.save(commit=False)
-            new_article.author = User.objects.get(id=1)
+            new_article.author = User.objects.get(id=request.user.id)
             new_article.save()
             return redirect('article:article_list')
         else:
