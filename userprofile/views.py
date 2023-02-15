@@ -70,7 +70,7 @@ def user_delete(request,id):
 
 @login_required(login_url='/userprofile/login/')
 def profile_edit(request, id):
-    user = User.objects.get(id=id)
+    user = User.objects.get(id=id)#为快测试
 
     if Profile.objects.filter(user_id=id).exists():
         profile = Profile.objects.get(user_id=id)
