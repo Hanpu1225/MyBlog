@@ -5,19 +5,28 @@ import markdown
 from .forms import ArticlePostForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 # Create your views here.
 
 
 def article_list(request):
-    articles = ArticlePost.objects.all()
-
+    articles_list = ArticlePost.objects.all()
+    #设置每页显示1篇文章
+    paginator = Paginator(articles_list,9)
+    #获取url中的页码
+    page = request.GET.get('page')
+    #返回对应页码的文章给articles
+    articles = paginator.get_page(page)
     context = {'articles':articles}
-
     return render(request,'article/list.html',context)
 
 
 def article_detail(request,id):
     article = ArticlePost.objects.get(id=id)
+
+    #update_fields=[]指定了数据库只更新total_views字段，优化执行效率
+    article.total_view += 1
+    article.save(update_fields=['total_view'])
 
     article.body = markdown.markdown(article.body,
     extensions=[
@@ -28,7 +37,6 @@ def article_detail(request,id):
     return render(request,'article/detail.html',context)
 
 
-@login_required(login_url='/userrofile/login/')
 def article_created(request):
     if request.method == 'POST':
         article_post_form = ArticlePostForm(data=request.POST)
@@ -54,8 +62,13 @@ def article_safe_delete(request, id):
         return HttpResponse("仅仅允许post请求。")
 
 
+@login_required(login_url='/userprofile/login/')
 def article_update(request, id):
     article = ArticlePost.objects.get(id=id)
+
+    if request.user != article.author:
+        return HttpResponse("您没有权限修改次文章。")
+
     if request.method == 'POST':
         article_post_form = ArticlePostForm(data=request.POST)
         if article_post_form.is_valid():

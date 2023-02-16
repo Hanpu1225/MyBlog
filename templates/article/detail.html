@@ -7,20 +7,29 @@
 
 {% block content %}
     <div class="container">
-        <h3 class="col-12 mt-4 mb-4">{{ article.title }}</h3>
-        <div class="col-12 alert alert-success">作者：{{ article.author }}
-            . <a onclick="confirm_safe_delete()" href="#">删除文章</a>
-            <form style="display: none;"
-                  method="POST"
-                  id="safe_delete"
-                  action="{% url 'article:article_safe_delete' article.id%}">
-            {% csrf_token %}
-                <button type="submit">发送</button>
-            </form>
-            . <a href="{% url 'article:article_update' article.id %}">编辑文章</a>
-        </div>
-        <div class="col-12">
-            <p>{{ article.body|safe }}</p>
+        <div class="row">
+            <div class="col-9">
+                <h3 class="mt-4 mb-4">{{ article.title }}</h3>
+                <div class="alert alert-success">
+                    <div>
+                        作者：{{ article.author }}
+                        {% if user == article.author %}
+                            . <a onclick="confirm_safe_delete()" href="#">删除文章</a>
+                            <form style="display: none;" method="POST" id="safe_delete" action="{% url 'article:article_safe_delete' article.id%}">
+                                {% csrf_token %}
+                                <button type="submit">发送</button>
+                            </form>
+                            . <a href="{% url 'article:article_update' article.id %}">编辑文章</a>
+                        {% endif %}
+                    </div>
+                    <div>
+                        浏览：{{ article.total_view }}
+                    </div>
+                </div>
+                <div class="col-12">
+                    <p>{{ article.body|safe }}</p>
+                </div>
+            </div>
         </div>
     </div>
 
