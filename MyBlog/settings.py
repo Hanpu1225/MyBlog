@@ -140,3 +140,7 @@ EMAIL_PORT = 165
 EMAIL_USE_TLS = True
 # 默认的发件人
 DEFAULT_FROM_EMAIL = 'xxx的博客 <hanpu1225@163.com>'
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR,'media/')
