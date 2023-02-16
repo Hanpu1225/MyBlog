@@ -70,8 +70,8 @@ def user_delete(request,id):
 
 @login_required(login_url='/userprofile/login/')
 def profile_edit(request, id):
-    user = User.objects.get(id=id)#为快测试
-
+    user = User.objects.get(id=id)
+    #user_id为一对一关系取得的
     if Profile.objects.filter(user_id=id).exists():
         profile = Profile.objects.get(user_id=id)
     else:
@@ -79,19 +79,22 @@ def profile_edit(request, id):
 
     if request.method == 'POST':
         if request.user != user:
-            return HttpResponse('您没有权限修改该用户信息。')
+            return HttpResponse('您没有权限编辑该用户信息。')
         profile_form = ProfileForm(data=request.POST)
         if profile_form.is_valid():
+
             profile_cd = profile_form.cleaned_data
             profile.phone = profile_cd['phone']
-            profile_bio = profile_cd['bio']
+            profile.bio = profile_cd['bio']
             profile.save()
+            print('aaaa')
             return redirect('userprofile:profile_edit',id=id)
         else:
             return HttpResponse('注册表单有误，请重新输入。')
     elif request.method == 'GET':
         profile_form = ProfileForm()
-        context = {'profile_form':profile_form,'user':user,'profile':profile}
-        return render(request,'userprofile/edit.html',context)
+
+        context = {'profile_form': profile_form, 'profile': profile, 'user': user}
+        return render(request,'userprofile/edit.html', context)
     else:
-        return HttpResponse('仅接收GET和POST请求。')
+        return HttpResponse('仅仅接收GET或POST清求。')
