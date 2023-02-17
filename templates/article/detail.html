@@ -26,8 +26,17 @@
                         浏览：{{ article.total_view }}
                     </div>
                 </div>
+
                 <div class="col-12">
                     <p>{{ article.body|safe }}</p>
+                </div>
+            </div>
+
+            <div class="col-3 mt-4">
+                <h4><strong>目录</strong></h4>
+                <hr>
+                <div>
+                    {{ toc|safe }}
                 </div>
             </div>
         </div>
